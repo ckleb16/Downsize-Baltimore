@@ -21,6 +21,7 @@ const maryPortrait = "/manus-storage/Mary_Lynch_3d838598.jpg";
 const paperTexture = "/manus-storage/downsize-baltimore-paper-texture_268a29f4.png";
 const contourTexture = "/manus-storage/downsize-baltimore-contour-lines_aaa317b7.png";
 const washTexture = "/manus-storage/downsize-baltimore-warm-wash_0631c386.png";
+const cummingsCircleLogo = "/manus-storage/cummings-and-co-circle.png";
 
 const ways = [
   {
@@ -58,6 +59,7 @@ const resources = [
   ["Probate & Estate Resources", "Guidance and trusted professionals when a home is part of a larger family transition.", BookOpen, "/resource-center?path=probate#resource-library"],
 ];
 
+// Edit the wording shown under “Credentials & specialties” here.
 const credentials: Credential[] = [
   { name: "Certified Senior Advisor" },
   { name: "Chair & Founder, National Aging in Place Council for Greater Baltimore" },
@@ -125,6 +127,10 @@ export default function Home() {
             <p>Downsize Baltimore grew from seeing how overwhelming housing decisions can become when family, aging, finances, belongings, and the future all collide at once.</p>
             <p>My role isn’t to convince you to move. It’s to help you understand your options, connect you with the right resources, and create a clear plan for whatever comes next.</p>
             <Credentials credentials={credentials} />
+            <div className="mary__brokerage-mark">
+              <img src={cummingsCircleLogo} width={300} height={300} loading="lazy" decoding="async" alt="" aria-hidden="true" />
+              <span>Affiliated brokerage<strong>Cummings &amp; Co. Realtors</strong></span>
+            </div>
             <a className="text-link" href="/meet-mary">Meet Mary <ArrowUpRight size={16} /></a>
           </div>
         </section>

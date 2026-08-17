@@ -9,8 +9,7 @@ type SiteFooterProps = {
   id?: string;
 };
 
-// TODO(assets): Cummings & Co. logo pending from client.
-const cummingsLogo: string | null = null;
+const cummingsLogo = "/manus-storage/cummings-and-co-logo.jpg";
 
 function BrokerageDetails({ className }: { className?: string }) {
   return (
@@ -18,8 +17,8 @@ function BrokerageDetails({ className }: { className?: string }) {
       <strong>Cummings &amp; Co Realtors</strong>
       <span>108 W. Timonium Road<br />Timonium, MD 21093</span>
       <span>Office <a href="tel:+14108230033">(410) 823-0033</a></span>
-      <span className="site-footer__brokerage-logo-slot" aria-hidden={!cummingsLogo}>
-        {cummingsLogo && <img src={cummingsLogo} alt="Cummings & Co. Realtors" />}
+      <span className="site-footer__brokerage-logo-slot">
+        <img src={cummingsLogo} width={520} height={292} alt="Cummings & Co. Realtors" />
       </span>
     </div>
   );
