@@ -1,13 +1,13 @@
-import { useState } from "react";
-import { ArrowUpRight, Anchor, Menu, Phone, X } from "lucide-react";
+import { Anchor } from "lucide-react";
+import { ButtonLink } from "../components/ButtonLink";
+import { SiteFooter } from "../components/SiteFooter";
+import { SiteHeader } from "../components/SiteHeader";
 
 /**
  * Harbor House Editorial — Meet Mary.
  * Personal, spacious, and story-led. Original photographs are preserved as supplied.
  */
 
-const wideLogo = "/manus-storage/DownsizeBaltimoreWide-YelWhite_e501a303.png";
-const verticalLogo = "/manus-storage/DownsizeBaltimoreB-YelWhite_850df9b1.png";
 const heroImage = "/manus-storage/mary-lynch-meet-mary-hero_8902efd8.jpg";
 const popImage = "/manus-storage/pop-and-baby-mary-boat_ef16c849.jpg";
 const popVideo = "/manus-storage/pop-driving-the-boat-18s_cc3eaa8d.mp4";
@@ -17,23 +17,11 @@ const chesapeakePhoto = "/manus-storage/mary-chesapeake-frenchies_ed69a28d.jpg";
 const oriolesPhoto = "/manus-storage/mary-orioles-family_627afe9d.jpg";
 const paperTexture = "/manus-storage/downsize-baltimore-paper-texture_268a29f4.png";
 const contourTexture = "/manus-storage/downsize-baltimore-contour-lines_aaa317b7.png";
-const calendlyUrl = "https://calendly.com/mary-movewithmarylynch/30min";
-const phoneNumber = "(410) 375-1400";
-const emailAddress = "mary@downsizebaltimore.com";
-
-const navItems = [["Home", "/"], ["Downsizing Services", "/downsizing-services"], ["Aging in Place", "/aging-in-place"], ["Buying & Selling", "/buying-selling"], ["Resource Center", "/resource-center"], ["Contact", "/contact"]];
-const footerNavItems = [["Home", "/"], ["Downsizing Services", "/downsizing-services"], ["Aging in Place", "/aging-in-place"], ["Buying & Selling", "/buying-selling"], ["Resource Center", "/resource-center"], ["Meet Mary", "/meet-mary"], ["Contact", "/contact"]];
-
-function ButtonLink({ children, href = calendlyUrl, variant = "gold" }: { children: React.ReactNode; href?: string; variant?: "gold" | "outline" | "light" }) { return <a className={`meet-button meet-button--${variant}`} href={href}>{children}<ArrowUpRight size={16} /></a>; }
-function Brand({ footer = false }: { footer?: boolean }) { return <a href="/" className={`meet-brand ${footer ? "meet-brand--footer" : ""}`} aria-label="Downsize Baltimore home"><img src={footer ? verticalLogo : wideLogo} alt="Downsize Baltimore" /></a>; }
-function Footer() { return <footer className="meet-footer"><div className="meet-footer__top"><div><Brand footer /><p>A Clear Plan for What Comes Next.<br /><i>Anchored in Baltimore.</i></p></div><div className="meet-footer__contact"><a className="meet-footer__phone" href="tel:+14103751400"><Phone size={15} /> {phoneNumber}</a><a href={`mailto:${emailAddress}`}>{emailAddress}</a><div><strong>Cummings &amp; Co Realtors</strong><span>108 W. Timonium Road<br />Timonium, MD 21093</span><span>Office <a href="tel:+14108230033">(410) 823-0033</a></span></div><ButtonLink>Schedule a Conversation</ButtonLink></div></div><div className="meet-footer__bottom"><div>{footerNavItems.map(([label, href]) => <a key={label} href={href}>{label}</a>)}</div><span>© 2026 Downsize Baltimore. All rights reserved.</span><span>Real estate services provided in affiliation with a licensed brokerage.</span></div></footer>; }
-
 export default function MeetMary() {
-  const [mobileOpen, setMobileOpen] = useState(false);
   return <div className="meet-page">
-    <header className="meet-header"><div className="meet-header__top"><Brand /><div><ButtonLink>Talk to Mary</ButtonLink><button className="meet-menu" aria-label={mobileOpen ? "Close menu" : "Open menu"} onClick={() => setMobileOpen((open) => !open)}>{mobileOpen ? <X size={22} /> : <Menu size={22} />}</button></div></div><nav className="meet-nav" aria-label="Primary navigation">{navItems.map(([label, href]) => <a key={label} href={href}>{label}</a>)}</nav>{mobileOpen && <nav className="meet-mobile-nav" aria-label="Mobile navigation">{navItems.map(([label, href]) => <a key={label} href={href} onClick={() => setMobileOpen(false)}>{label}<ArrowUpRight size={16} /></a>)}<ButtonLink>Talk to Mary</ButtonLink></nav>}</header>
+    <SiteHeader theme="meet" />
     <main>
-      <section className="meet-hero"><div className="meet-hero__photo"><img src={heroImage} alt="Mary Lynch seated on a cream sofa holding a Mary Lynch folder" /><span>01 / Meet Mary Lynch</span></div><div className="meet-hero__copy"><p className="meet-eyebrow">A clear-eyed, human approach</p><h1>Real estate is what I know.<br /><i>Helping families through change is why I do it.</i></h1><div className="meet-rule" /><p>Nearly three decades in residential real estate have taught me how much a home can hold. The plans, the people, the memories, and the next chapter are all part of the conversation.</p><ButtonLink>Let’s Talk About What Comes Next</ButtonLink></div></section>
+      <section className="meet-hero"><div className="meet-hero__photo"><img src={heroImage} alt="Mary Lynch seated on a cream sofa holding a Mary Lynch folder" /><span>01 / Meet Mary Lynch</span></div><div className="meet-hero__copy"><p className="meet-eyebrow">A clear-eyed, human approach</p><h1>Real estate is what I know.<br /><i>Helping families through change is why I do it.</i></h1><div className="meet-rule" /><p>Nearly three decades in residential real estate have taught me how much a home can hold. The plans, the people, the memories, and the next chapter are all part of the conversation.</p><ButtonLink theme="meet">Let’s Talk About What Comes Next</ButtonLink></div></section>
 
       <section className="meet-story"><div className="meet-story__aside"><p className="meet-eyebrow">The work behind the work</p><span>02</span><Anchor size={28} strokeWidth={1.1} /></div><div className="meet-story__body"><h2>A career in real estate.<br /><i>A purpose in helping families.</i></h2><p>For nearly 30 years, I have helped Baltimore-area families buy and sell homes. I began with first-time buyers, relocation, foreclosures, estates, and the many different ways real estate decisions can shape a family’s life.</p><p>Over time, the work became more focused. I began to see how housing decisions become more layered when family, aging, finances, belongings, health, and the future all arrive at the same table.</p><p>When you are younger, there are often opportunities for a do-over. When someone is making a housing decision at 70, 80, or 90, there may not be as many opportunities to get it wrong. Those decisions deserve more time, education, resources, and planning.</p><div className="meet-credentials"><span>30 years in residential real estate</span><span>Certified Senior Advisor</span><span>Certified Probate Real Estate Specialist</span><span>Chair and Founder, NAIPC Greater Baltimore</span></div><figure className="meet-story__personal-photo"><img src={oriolesPhoto} alt="Mary with family at Orioles Park" /></figure></div></section>
 
@@ -45,6 +33,6 @@ export default function MeetMary() {
 
       <section className="meet-life"><div className="meet-life__intro"><p className="meet-eyebrow">Mary outside of work</p><h2>Still very much<br /><i>a Maryland girl.</i></h2><figure className="meet-life__personal-photo"><img src={chesapeakePhoto} alt="Mary with family and Frenchies on the Chesapeake" /></figure><p>I love the “Smalltimore” nature of Baltimore, where somehow you still run into people you have known since elementary school.</p></div><div className="meet-life__details"><p>Within a few hours, I can be at the beach, in the mountains, in another major city, or out in horse country. I grew up riding horses and still love the quiet beauty of Maryland’s farms.</p><div className="meet-life__words"><span>Family</span><span>Fellowship</span><span>Friendship</span><span>Good food</span><span>Faith</span><span>Travel</span><span>Frenchies</span><span>Orioles &amp; Ravens</span></div><figure className="meet-life__personal-photo meet-life__personal-photo--orioles"><img src={familyTravelPhoto} alt="Mary with family while traveling" /></figure><p>I love a day at the beach, a good meal, and the kind of travel that makes me feel like I am learning something new. I have recently discovered deep-sea fishing, and I have realized that the older I get, the more I enjoy adventure.</p></div></section>
 
-      <section className="meet-final" data-testimonial-reserve="meet-mary-closing" style={{ backgroundImage: `url(${paperTexture})` }}><div className="meet-final__frame"><p className="meet-eyebrow">Empowered, not overwhelmed.</p><h2>Let’s Talk About<br /><i>What Comes Next.</i></h2><p>My goal is for you to understand your choices, have access to real resources, and feel confident making the decision that is right for you.</p><p>Planning ahead is not only a gift you give yourself. It can also be a gift to the people you love, leaving clarity instead of unanswered questions.</p><p>You can do this. It just takes a place to start.</p><ButtonLink>Schedule a Conversation</ButtonLink></div></section>
-    </main><Footer /></div>;
+      <section className="meet-final" data-testimonial-reserve="meet-mary-closing" style={{ backgroundImage: `url(${paperTexture})` }}><div className="meet-final__frame"><p className="meet-eyebrow">Empowered, not overwhelmed.</p><h2>Let’s Talk About<br /><i>What Comes Next.</i></h2><p>My goal is for you to understand your choices, have access to real resources, and feel confident making the decision that is right for you.</p><p>Planning ahead is not only a gift you give yourself. It can also be a gift to the people you love, leaving clarity instead of unanswered questions.</p><p>You can do this. It just takes a place to start.</p><ButtonLink theme="meet">Schedule a Conversation</ButtonLink></div></section>
+    </main><SiteFooter theme="meet" /></div>;
 }

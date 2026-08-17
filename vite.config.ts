@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { defineConfig, type Plugin, type ViteDevServer } from "vite";
 import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
+import { sites } from "./server/sites-vite-plugin";
 
 // =============================================================================
 // Manus Debug Collector - Vite Plugin
@@ -154,11 +155,18 @@ function vitePluginStorageProxy(): Plugin {
   return {
     name: "manus-storage-proxy",
     configureServer(server: ViteDevServer) {
-      server.middlewares.use("/manus-storage", async (req, res) => {
+      server.middlewares.use("/manus-storage", async (req, res, next) => {
         const key = req.url?.replace(/^\//, "");
         if (!key) {
           res.writeHead(400, { "Content-Type": "text/plain" });
           res.end("Missing storage key");
+          return;
+        }
+
+        const localStorageRoot = path.resolve(PROJECT_ROOT, "client", "public", "manus-storage");
+        const localAssetPath = path.resolve(localStorageRoot, key);
+        if (localAssetPath.startsWith(`${localStorageRoot}${path.sep}`) && fs.existsSync(localAssetPath)) {
+          next();
           return;
         }
 
@@ -203,7 +211,13 @@ function vitePluginStorageProxy(): Plugin {
   };
 }
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector(), vitePluginStorageProxy()];
+const isProduction = process.env.NODE_ENV === "production";
+const plugins = [
+  react(),
+  tailwindcss(),
+  ...(!isProduction ? [jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector(), vitePluginStorageProxy()] : []),
+  sites(PROJECT_ROOT),
+];
 
 export default defineConfig({
   plugins,

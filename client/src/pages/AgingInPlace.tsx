@@ -1,26 +1,17 @@
 import { useState } from "react";
-import { ArrowUpRight, Check, Anchor, Home, Menu, ShieldCheck, Sparkles, X } from "lucide-react";
+import { ArrowUpRight, Check, Anchor, Home, ShieldCheck, Sparkles } from "lucide-react";
+import { ButtonLink } from "../components/ButtonLink";
+import { SiteFooter } from "../components/SiteFooter";
+import { SiteHeader } from "../components/SiteHeader";
+import { calendlyUrl } from "../components/siteConfig";
 
 // Harbor House Editorial: warm, advisory, spacious, and human — navy, cream, taupe, antique gold,
 // Cormorant-led headlines, quiet rules, symbolic compass details, and no sales-first framing.
 const heroPhoto = "/manus-storage/aging-in-place-hero_627154ed.jpg";
 const consultationPhoto = "/manus-storage/aging-in-place-consultation_1b627f71.jpg";
 const personalPhoto = "/manus-storage/mary-and-pop-boat-cropped_db3e1abb.jpg";
-const wideLogo = "/manus-storage/DownsizeBaltimoreWide-YelWhite_e501a303.png";
-const verticalLogo = "/manus-storage/DownsizeBaltimoreB-YelWhite_850df9b1.png";
 const paperTexture = "/manus-storage/downsize-baltimore-paper-texture_268a29f4.png";
 const contourTexture = "/manus-storage/downsize-baltimore-contour-lines_aaa317b7.png";
-const calendlyUrl = "https://calendly.com/mary-movewithmarylynch/30min";
-
-const navItems = [
-  ["Home", "/"],
-  ["Downsizing Services", "/downsizing-services"],
-  ["Buying & Selling", "/buying-selling"],
-  ["Resource Center", "/resource-center"],
-  ["Meet Mary", "/meet-mary"],
-  ["Contact", "/contact"],
-];
-const footerNavItems = [["Home", "/"], ["Downsizing Services", "/downsizing-services"], ["Aging in Place", "/aging-in-place"], ["Buying & Selling", "/buying-selling"], ["Resource Center", "/resource-center"], ["Meet Mary", "/meet-mary"], ["Contact", "/contact"]];
 
 const assessmentTopics = [
   ["Entry & Mobility", "Steps, thresholds, handrails, no-step entry, and wider doorways.", Home],
@@ -55,25 +46,6 @@ const evaluationChoices: { value: EvaluationChoice; label: string }[] = [
   { value: "closer", label: "No, this is becoming difficult" },
 ];
 
-function ButtonLink({ children, href = calendlyUrl, variant = "gold" }: { children: React.ReactNode; href?: string; variant?: "gold" | "outline" | "light" }) {
-  return <a className={`aip-button aip-button--${variant}`} href={href}>{children}<ArrowUpRight size={15} /></a>;
-}
-
-function Header() {
-  const [open, setOpen] = useState(false);
-  return <header className="ds-header aip-header">
-    <div className="ds-header__top"><a href="/" className="ds-brand"><img src={wideLogo} alt="Downsize Baltimore" /></a><ButtonLink>Talk to Mary</ButtonLink><button className="ds-menu" aria-label="Open navigation" onClick={() => setOpen(!open)}>{open ? <X size={22} /> : <Menu size={22} />}</button></div>
-    <nav className={`ds-nav ${open ? "is-open" : ""}`}>{navItems.map(([label, href]) => <a key={label} href={href} onClick={() => setOpen(false)}>{label}</a>)}<span className="ds-nav-cta-mobile"><ButtonLink>Talk to Mary</ButtonLink></span></nav>
-  </header>;
-}
-
-function Footer() {
-  return <footer className="ds-footer" id="contact" style={{ backgroundImage: `linear-gradient(rgba(16,42,67,.98),rgba(16,42,67,.98)),url(${paperTexture})` }}>
-    <div className="ds-footer__top"><div><img className="ds-footer__logo" src={verticalLogo} alt="Downsize Baltimore" /></div><div><p className="ds-footer__statement">A Clear Plan for What Comes Next.<br /><i>Anchored in Baltimore.</i></p></div><div className="ds-footer__contact"><a className="ds-phone" href="tel:+14103751400">(410) 375-1400</a><a href="mailto:mary@downsizebaltimore.com">mary@downsizebaltimore.com</a><strong>Cummings &amp; Co Realtors</strong><span>108 W. Timonium Road<br />Timonium, MD 21093</span><span>Office <a href="tel:+14108230033">(410) 823-0033</a></span><ButtonLink>Schedule a Conversation</ButtonLink></div></div>
-    <div className="ds-footer__bottom"><div className="ds-footer__links">{footerNavItems.map(([label, href]) => <a key={label} href={href}>{label}</a>)}</div><span>© 2026 Downsize Baltimore. All rights reserved.</span><span>Real estate services provided in affiliation with a licensed brokerage.</span></div>
-  </footer>;
-}
-
 function BulletList({ items }: { items: string[] }) {
   return <ul className="aip-bullet-list">{items.map(item => <li key={item}><Check size={14} />{item}</li>)}</ul>;
 }
@@ -94,16 +66,16 @@ function SelfEvaluation() {
   const reset = () => { setAnswers({}); setStep(0); };
   return <div className="aip-evaluation">
     <div className="aip-evaluation__intro"><p className="aip-eyebrow aip-eyebrow--gold">A personal check-in</p><h3>Should I Stay or Should I Go?</h3><p className="aip-evaluation__subtitle">A quick check-in on how well your home and your life still fit.</p><p>Your home is only one part of the picture.</p><p>These questions are designed to help you look at your home, your health, your finances, your connections and your everyday life. There are no right or wrong answers, and this isn't a test that tells you whether you should move.</p><p>It's simply a way to see what's working well, what may need some planning, and what deserves a closer look.</p></div>
-    {!complete ? <div className={`aip-evaluation__question ${question.final ? "is-final" : ""}`}><div className="aip-evaluation__progress">Question {step + 1} of {evaluationQuestions.length}</div><h4>{question.title}</h4><p>{question.detail}</p><div className="aip-evaluation__choices">{(question.final ? [{ value: "working", label: "Absolutely" }, { value: "planning", label: "I'm not sure" }, { value: "closer", label: "Probably not" }] : evaluationChoices).map((choice) => <button key={choice.label} type="button" onClick={() => selectAnswer(choice.value as EvaluationChoice)}>{choice.label}<ArrowUpRight size={15} /></button>)}</div></div> : <div className="aip-evaluation__results"><p className="aip-evaluation__progress">Your reflection</p><h4>{resultCopy.label}</h4><p className="aip-evaluation__result-headline">{resultCopy.headline}</p><p>{resultCopy.body}</p><div className="aip-evaluation__areas"><span><b>{counts.working}</b> Working Well</span><span><b>{counts.planning}</b> Worth Planning For</span><span><b>{counts.closer}</b> Needs a Closer Look</span></div><p className="aip-evaluation__closing">Sometimes staying means changing the house. Sometimes it means changing houses. Either way, it starts with a plan.</p><div className="aip-evaluation__result-actions"><ButtonLink href={calendlyUrl}>Talk Through My Results</ButtonLink><button type="button" className="aip-evaluation__reset" onClick={reset}>Take the check-in again</button></div></div>}
+    {!complete ? <div className={`aip-evaluation__question ${question.final ? "is-final" : ""}`}><div className="aip-evaluation__progress">Question {step + 1} of {evaluationQuestions.length}</div><h4>{question.title}</h4><p>{question.detail}</p><div className="aip-evaluation__choices">{(question.final ? [{ value: "working", label: "Absolutely" }, { value: "planning", label: "I'm not sure" }, { value: "closer", label: "Probably not" }] : evaluationChoices).map((choice) => <button key={choice.label} type="button" onClick={() => selectAnswer(choice.value as EvaluationChoice)}>{choice.label}<ArrowUpRight size={15} /></button>)}</div></div> : <div className="aip-evaluation__results"><p className="aip-evaluation__progress">Your reflection</p><h4>{resultCopy.label}</h4><p className="aip-evaluation__result-headline">{resultCopy.headline}</p><p>{resultCopy.body}</p><div className="aip-evaluation__areas"><span><b>{counts.working}</b> Working Well</span><span><b>{counts.planning}</b> Worth Planning For</span><span><b>{counts.closer}</b> Needs a Closer Look</span></div><p className="aip-evaluation__closing">Sometimes staying means changing the house. Sometimes it means changing houses. Either way, it starts with a plan.</p><div className="aip-evaluation__result-actions"><ButtonLink theme="aging" href={calendlyUrl}>Talk Through My Results</ButtonLink><button type="button" className="aip-evaluation__reset" onClick={reset}>Take the check-in again</button></div></div>}
   </div>;
 }
 
 export default function AgingInPlace() {
   const [openAssessment, setOpenAssessment] = useState<number | null>(null);
-  return <div className="aip-page"><Header /><main>
+  return <div className="aip-page"><SiteHeader theme="aging" /><main>
     <section className="aip-hero aip-hero--split">
       <div className="aip-hero__photo" style={{ backgroundImage: `url(${heroPhoto})` }} aria-label="Mary Lynch seated at a table in a bright home" />
-      <div className="aip-hero__panel"><div className="aip-hero__content"><p className="aip-eyebrow"><span /> Aging in Place</p><h1>Age in Place by Design,<br /><i>Not by Default.</i></h1><p>Wanting to stay in your home and being set up to stay in your home are two very different things.</p><p>Aging in place successfully means looking beyond where you live today and thinking about how your home, health, mobility, finances, support system, and community may need to work for you in the years ahead.</p><ButtonLink>Schedule a Conversation</ButtonLink><p className="aip-hero__caption-text"><span>01</span>Plan early. Understand the whole picture.</p></div></div>
+      <div className="aip-hero__panel"><div className="aip-hero__content"><p className="aip-eyebrow"><span /> Aging in Place</p><h1>Age in Place by Design,<br /><i>Not by Default.</i></h1><p>Wanting to stay in your home and being set up to stay in your home are two very different things.</p><p>Aging in place successfully means looking beyond where you live today and thinking about how your home, health, mobility, finances, support system, and community may need to work for you in the years ahead.</p><ButtonLink theme="aging">Schedule a Conversation</ButtonLink><p className="aip-hero__caption-text"><span>01</span>Plan early. Understand the whole picture.</p></div></div>
     </section>
 
     <section className="aip-stats" style={{ backgroundImage: `url(${paperTexture})` }}><div className="aip-section-label"><Anchor size={15} /><span /> THE GAP BETWEEN WANTING TO STAY AND BEING READY TO STAY</div><div className="aip-stats__grid"><article><strong>75%</strong><p>of adults age 50+ say they want to remain in their current homes as they age.</p></article><article><strong>Less than 4%</strong><p>of U.S. homes have a no-step entrance, single-floor living, and doors and hallways wide enough for a wheelchair.</p></article></div><p className="aip-source">Sources: AARP; Harvard Joint Center for Housing Studies. Baltimore has many older, multi-level homes and rowhomes that may present additional challenges for aging in place.</p></section>
@@ -118,12 +90,12 @@ export default function AgingInPlace() {
 
     <section className="aip-adu" style={{ backgroundImage: `linear-gradient(90deg,rgba(16,42,67,.95),rgba(16,42,67,.82)),url(${paperTexture})` }}><div><p className="aip-eyebrow aip-eyebrow--gold">A connected possibility</p><h2>Sometimes the Best Solution Is <i>Right in the Backyard.</i></h2></div><div><p>Accessory Dwelling Units and multigenerational living can create private but connected arrangements for a parent, adult child, caregiver, or family member.</p><p>Mary teaches continuing education on Maryland ADUs and helps families understand how these options may fit into a longer-term housing plan.</p><a className="aip-light-link" href="/resource-center?path=housing#resource-library">Explore ADU resources <ArrowUpRight size={16} /></a></div></section>
 
-    <section className="aip-program"><div className="aip-program__head"><p className="aip-eyebrow">An educational starting point</p><h2>Should I Stay<br /><i>or Should I Go?</i></h2><p>Mary created this program to help families examine the question from more than one angle — before a crisis makes the decision for them.</p></div><div className="aip-program__network"><p>Connected professionals may include:</p><div>{networkItems.map((item, i) => <span key={item}><b>0{i + 1}</b>{item}</span>)}</div><div className="aip-button-row"><ButtonLink href="/resource-center#upcoming-classes-events">See Upcoming Programs</ButtonLink><ButtonLink variant="outline" href="#self-evaluation">Take the Self-Evaluation</ButtonLink></div></div></section>
+    <section className="aip-program"><div className="aip-program__head"><p className="aip-eyebrow">An educational starting point</p><h2>Should I Stay<br /><i>or Should I Go?</i></h2><p>Mary created this program to help families examine the question from more than one angle — before a crisis makes the decision for them.</p></div><div className="aip-program__network"><p>Connected professionals may include:</p><div>{networkItems.map((item, i) => <span key={item}><b>0{i + 1}</b>{item}</span>)}</div><div className="aip-button-row"><ButtonLink theme="aging" href="/resource-center#upcoming-classes-events">See Upcoming Programs</ButtonLink><ButtonLink theme="aging" variant="outline" href="#self-evaluation">Take the Self-Evaluation</ButtonLink></div></div></section>
 
     <section id="self-evaluation" className="aip-resource" style={{ backgroundImage: `linear-gradient(rgba(16,42,67,.97),rgba(16,42,67,.97)),url(${contourTexture})` }}><div className="aip-resource__head"><div><p className="aip-eyebrow aip-eyebrow--gold">A practical next step</p><h2>Should I Stay or Should I Go?<br /><i>A Personal Housing &amp; Aging Self-Evaluation.</i></h2></div><p>A thoughtful guide across home safety, health, connection, transportation, care, finances, legal planning, and housing options.</p></div><SelfEvaluation /></section>
 
     <section className="aip-naipc"><div className="aip-naipc__mark"><Anchor size={31} /><span>NAIPC<br /><small>GREATER BALTIMORE</small></span></div><div><p className="aip-eyebrow">Connected to the right people</p><h2>Connected to the Right People <i>Matters.</i></h2><p>Mary is the <strong>Founder and Chair of the National Aging in Place Council, Greater Baltimore Chapter</strong>. Through NAIPC, she works alongside professionals across the many areas that affect successful aging.</p><p>She helps families understand the bigger picture and connect with the appropriate professionals — without trying to be the lawyer, contractor, healthcare professional, financial advisor, or occupational therapist herself.</p><a className="aip-text-link" href="/resource-center?path=local#resource-library">Get Connected to Trusted Local Resources <ArrowUpRight size={16} /></a></div></section>
 
-    <section className="aip-final" style={{ backgroundImage: `url(${paperTexture})` }}><div className="aip-final__frame"><Anchor size={30} /><p className="aip-eyebrow">A clearer decision starts early</p><h2>The Goal Is Not to Stay at All Costs.<br /><i>And It Is Not to Move Before You’re Ready.</i></h2><p>The goal is to understand your options early enough that the decision is still yours.</p><p>Whether that means making your current home safer, creating a multigenerational solution, finding a home that better fits the years ahead, or simply beginning the conversation, having a plan can make all the difference.</p><ButtonLink>Schedule a Conversation</ButtonLink></div></section>
-  </main><Footer /></div>;
+    <section className="aip-final" style={{ backgroundImage: `url(${paperTexture})` }}><div className="aip-final__frame"><Anchor size={30} /><p className="aip-eyebrow">A clearer decision starts early</p><h2>The Goal Is Not to Stay at All Costs.<br /><i>And It Is Not to Move Before You’re Ready.</i></h2><p>The goal is to understand your options early enough that the decision is still yours.</p><p>Whether that means making your current home safer, creating a multigenerational solution, finding a home that better fits the years ahead, or simply beginning the conversation, having a plan can make all the difference.</p><ButtonLink theme="aging">Schedule a Conversation</ButtonLink></div></section>
+    </main><SiteFooter theme="aging" /></div>;
 }
