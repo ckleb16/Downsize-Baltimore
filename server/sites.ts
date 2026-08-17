@@ -19,7 +19,9 @@ const worker = {
       return response;
     }
 
-    const indexUrl = new URL("/index.html", request.url);
+    // The asset layer canonicalizes /index.html to /, so request the root
+    // document directly and preserve the original client-side route URL.
+    const indexUrl = new URL("/", request.url);
     return env.ASSETS.fetch(new Request(indexUrl, request));
   },
 };
