@@ -17,8 +17,17 @@ export function sites(projectRoot: string): Plugin {
     name: "sites",
     apply: "build",
     async closeBundle() {
+      const publicAssets = resolve(projectRoot, "dist", "public");
+      const clientAssets = resolve(projectRoot, "dist", "client");
       const outputDirectory = resolve(projectRoot, "dist", ".openai");
       const hostingConfig = resolve(projectRoot, ".openai", "hosting.json");
+
+      // Sites exposes the Cloudflare ASSETS binding from dist/client. Keep the
+      // existing dist/public output for the local Express preview as well.
+      await rm(clientAssets, { recursive: true, force: true });
+      if (await exists(publicAssets)) {
+        await cp(publicAssets, clientAssets, { recursive: true });
+      }
 
       await rm(outputDirectory, { recursive: true, force: true });
       await mkdir(outputDirectory, { recursive: true });
