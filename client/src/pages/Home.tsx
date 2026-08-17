@@ -6,10 +6,13 @@ import {
   Anchor,
   Home as HomeIcon,
   MoveRight,
+  Pause,
+  Play,
   Scale,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ButtonLink } from "../components/ButtonLink";
 import { Credentials, type Credential } from "../components/Credentials";
 import { SiteFooter } from "../components/SiteFooter";
@@ -71,6 +74,132 @@ const credentials: Credential[] = [
 // TODO(assets): approved client excerpts and attributions pending from client.
 const testimonials: Testimonial[] = [];
 
+const commonQuestions = [
+  "Should Mom stay in her home?",
+  "Would downsizing make life easier?",
+  "Where do we even begin?",
+];
+
+function CommonQuestions() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [previousIndex, setPreviousIndex] = useState<number | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [hasFocus, setHasFocus] = useState(false);
+  const [isPageVisible, setIsPageVisible] = useState(true);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const activeIndexRef = useRef(0);
+  const transitionTimerRef = useRef<number | null>(null);
+
+  const showQuestion = useCallback((nextIndex: number) => {
+    const normalizedIndex = (nextIndex + commonQuestions.length) % commonQuestions.length;
+    const currentIndex = activeIndexRef.current;
+
+    if (normalizedIndex === currentIndex) return;
+
+    if (transitionTimerRef.current !== null) {
+      window.clearTimeout(transitionTimerRef.current);
+    }
+
+    setPreviousIndex(currentIndex);
+    activeIndexRef.current = normalizedIndex;
+    setActiveIndex(normalizedIndex);
+    transitionTimerRef.current = window.setTimeout(() => {
+      setPreviousIndex(null);
+      transitionTimerRef.current = null;
+    }, 450);
+  }, []);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const syncPreference = () => setPrefersReducedMotion(mediaQuery.matches);
+
+    syncPreference();
+    mediaQuery.addEventListener("change", syncPreference);
+    return () => mediaQuery.removeEventListener("change", syncPreference);
+  }, []);
+
+  useEffect(() => {
+    const syncVisibility = () => setIsPageVisible(document.visibilityState !== "hidden");
+
+    syncVisibility();
+    document.addEventListener("visibilitychange", syncVisibility);
+    return () => document.removeEventListener("visibilitychange", syncVisibility);
+  }, []);
+
+  useEffect(() => {
+    if (isPaused || isHovered || hasFocus || !isPageVisible || prefersReducedMotion) return;
+
+    const interval = window.setInterval(() => {
+      showQuestion(activeIndexRef.current + 1);
+    }, 5000);
+
+    return () => window.clearInterval(interval);
+  }, [hasFocus, isHovered, isPageVisible, isPaused, prefersReducedMotion, showQuestion]);
+
+  useEffect(() => () => {
+    if (transitionTimerRef.current !== null) {
+      window.clearTimeout(transitionTimerRef.current);
+    }
+  }, []);
+
+  return (
+    <div
+      className="questions-strip__carousel"
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Common questions"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocusCapture={() => setHasFocus(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setHasFocus(false);
+        }
+      }}
+    >
+      <ol className="sr-only">
+        {commonQuestions.map((question) => <li key={question}>{question}</li>)}
+      </ol>
+      <div className="questions-strip__viewport" aria-hidden="true">
+        {commonQuestions.map((question, index) => (
+          <p
+            className={`questions-strip__question${index === activeIndex ? " is-active" : ""}${index === previousIndex ? " is-exiting" : ""}`}
+            key={question}
+          >
+            {question}
+          </p>
+        ))}
+      </div>
+      <div className="questions-strip__controls" role="group" aria-label="Question slider controls">
+        <div className="questions-strip__positions" role="group" aria-label="Choose a question">
+          {commonQuestions.map((question, index) => (
+            <button
+              type="button"
+              className="questions-strip__position"
+              aria-label={`Show question ${index + 1}: ${question}`}
+              aria-pressed={index === activeIndex}
+              onClick={() => showQuestion(index)}
+              key={question}
+            >
+              <span />
+            </button>
+          ))}
+        </div>
+        <button
+          type="button"
+          className="questions-strip__pause"
+          aria-label={prefersReducedMotion ? "Automatic question rotation is disabled by your motion preference" : isPaused ? "Resume automatic question rotation" : "Pause automatic question rotation"}
+          disabled={prefersReducedMotion}
+          onClick={() => setIsPaused((paused) => !paused)}
+        >
+          {isPaused || prefersReducedMotion ? <Play size={14} aria-hidden="true" /> : <Pause size={14} aria-hidden="true" />}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   return (
     <div id="top" className="site-shell">
@@ -87,18 +216,11 @@ export default function Home() {
             <p className="hero__copy hero__copy--second">I help Baltimore-area families understand their options, make a plan, and move forward with confidence.</p>
             <ButtonLink theme="home">Schedule a Conversation</ButtonLink>
           </div>
-          <div className="hero__caption"><span>30 YEARS</span><span>Helping Baltimore-area families make thoughtful real estate decisions.</span></div>
-        </section>
-
-        <section className="intro section-paper" style={{ backgroundImage: `url(${paperTexture})` }}>
-          <div className="intro__label"><Anchor size={15} strokeWidth={1.4} /><span className="rule" /> START WHERE YOU ARE</div>
-          <div className="intro__copy">
-            <h2>You don’t have to know the answer yet. <i>Start here.</i></h2>
-          </div>
+          <div className="hero__caption"><span>30 YEARS</span><span>Helping Baltimore families make thoughtful real estate decisions.</span></div>
         </section>
 
         <section id="ways-to-begin" className="ways section-paper">
-          <div className="section-heading"><p className="eyebrow">Three ways to begin</p><p className="section-heading__aside">A thoughtful next step<br />doesn’t need to be a big one.</p></div>
+          <div className="section-heading"><h2 className="eyebrow section-heading__title">Three ways to begin</h2></div>
           <div className="way-grid">
             {ways.map(({ icon: Icon, number, title, body, link, href }) => <article className="way-card" key={title}>
               <div className="way-card__top"><span>{number}</span><Icon size={29} strokeWidth={1.2} /></div>
@@ -109,9 +231,9 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="questions-strip section-paper">
-          <div className="questions-strip__marker"><Anchor size={23} strokeWidth={1.2} /><span>QUESTIONS I HEAR EVERY DAY…</span></div>
-          <div className="questions-strip__copy"><p>Should Mom stay in her home?</p><p>Would downsizing make life easier?</p><p>Where do we even begin?</p></div>
+        <section className="questions-strip section-paper" aria-labelledby="common-questions-label">
+          <div className="questions-strip__marker"><Anchor size={23} strokeWidth={1.2} /><span id="common-questions-label">QUESTIONS I HEAR EVERY DAY…</span></div>
+          <CommonQuestions />
         </section>
 
         <section id="meet-mary" className="mary-section">
@@ -119,7 +241,6 @@ export default function Home() {
             <div className="mary__portrait-frame"><img src={maryPortrait} loading="lazy" decoding="async" alt="Mary Lynch seated on a cream sofa" className="mary__portrait" /><div className="mary__portrait-caption"><span>Mary Lynch</span><small>Founder, Downsize Baltimore</small></div></div>
           </div>
           <div className="mary__copy">
-            <p className="eyebrow">A clear-eyed, human approach</p>
             <h2>Why Families<br /><i>Choose Mary</i></h2>
             <div className="gold-rule" />
             <p>For nearly three decades, I’ve helped Baltimore families buy and sell homes.</p>
@@ -129,7 +250,7 @@ export default function Home() {
             <Credentials credentials={credentials} />
             <div className="mary__brokerage-mark">
               <img src={cummingsCircleLogo} width={300} height={300} loading="lazy" decoding="async" alt="" aria-hidden="true" />
-              <span>Affiliated brokerage<strong>Cummings &amp; Co. Realtors</strong></span>
+              <strong>Cummings &amp; Co. Realtors</strong>
             </div>
             <a className="text-link" href="/meet-mary">Meet Mary <ArrowUpRight size={16} /></a>
           </div>
@@ -143,8 +264,8 @@ export default function Home() {
         </section>
 
         <section id="contact" className="final-cta section-paper" style={{ backgroundImage: `url(${paperTexture})` }}>
-          <div className="final-cta__mark"><Anchor size={28} strokeWidth={1.2} /><span>02</span></div>
-          <div className="final-cta__content"><p className="eyebrow">A conversation can be the beginning</p><h2>You Don’t Need a<br /><i>Perfect Plan.</i></h2><p>Whether you’re thinking about a move next month, next year, or simply wondering what your options might be, let’s talk.</p><div className="final-cta__buttons"><ButtonLink theme="home">Schedule a Conversation</ButtonLink></div></div>
+          <div className="final-cta__mark"><Anchor size={28} strokeWidth={1.2} /></div>
+          <div className="final-cta__content"><p className="eyebrow">Your next chapter, thoughtfully planned</p><h2><span className="final-cta__headline-line">Move Forward</span><span className="final-cta__headline-line"><i>With Clarity.</i></span></h2><p>Whether a change is near, years away, or simply taking shape, a thoughtful conversation can help you understand your options and choose what comes next with confidence.</p><div className="final-cta__buttons"><ButtonLink theme="home">Schedule a Conversation</ButtonLink></div></div>
         </section>
       </main>
 
